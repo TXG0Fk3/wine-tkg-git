@@ -1,4 +1,4 @@
-name: Wine Arch Linux CI
+name: Wine nopackage Arch Linux CI
 
 on:
   schedule:
@@ -20,7 +20,6 @@ jobs:
           pacman -Syu --noconfirm base-devel sudo
           useradd user -G wheel && echo "user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
           chown user -R . && cd wine-tkg-git
-          sed -i 's/wayland_driver="false"/wayland_driver="true"/' customization.cfg
           su user -c "yes|PKGDEST=/tmp/wine-tkg makepkg --noconfirm -s"
 
       - name: Archive the artifacts
