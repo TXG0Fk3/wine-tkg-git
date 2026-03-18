@@ -1,4 +1,4 @@
-name: Wine nopackage Arch Linux CI
+name: Wine Arch Linux CI
 
 on:
   schedule:
