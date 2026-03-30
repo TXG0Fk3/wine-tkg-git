@@ -2,7 +2,7 @@ name: Proton nopackage Arch Linux CI
 
 on:
   schedule:
-    - cron:  '25 9,21 * * *'
+    - cron:  '0 9 * * *'
   workflow_dispatch:
 
 jobs:

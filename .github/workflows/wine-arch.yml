@@ -2,7 +2,7 @@ name: Wine Arch Linux CI
 
 on:
   schedule:
-    - cron:  '45 8,20 * * *'
+    - cron:  '0 8 * * *'
   workflow_dispatch:
 
 jobs:
