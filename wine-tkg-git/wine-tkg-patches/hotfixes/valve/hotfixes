@@ -18,11 +18,13 @@ if [ "$_EXTERNAL_INSTALL" != "proton" ]; then
 fi
 
 # Proton 10 quirks
-if [[ "$_plain_version" = *_10.0 ]]; then
+if [[ "$_plain_version" = *_10.0 ]] || [[ "$_plain_version" = *_11.0 ]]; then
   # Proton-wine 10 (at least) depends on ffmpeg 4.4, which is not necessarily easily available on all distros
   # Reverting https://github.com/ValveSoftware/wine/commit/063a29bc8ba05a97152b2f9a97ad7ab12007e1e7 allows building against current
   # https://github.com/Frogging-Family/wine-tkg-git/issues/1462
-  cp "$_where"/wine-tkg-patches/hotfixes/valve/fixes/0001-Revert-winedmo-Handle-PCM-audio-big-endian-formats.mypatch "$_where"/
+  if [ "$_EXTERNAL_INSTALL" != "proton" ] || ( [ "$_EXTERNAL_INSTALL" = "proton" ] && [ "$_no_container" != "false" ] ); then
+    cp "$_where"/wine-tkg-patches/hotfixes/valve/fixes/0001-Revert-winedmo-Handle-PCM-audio-big-endian-formats.mypatch "$_where"/
+  fi
 
   # Proton Implement ICU, but this depends on separate project and this need to be revert. Or this cause problem
   # https://github.com/Frogging-Family/wine-tkg-git/issues/1492
@@ -38,8 +40,14 @@ if [[ "$_plain_version" = *_10.0 ]]; then
 
   # Revert breaking change regarding linking against libopencl - https://github.com/ValveSoftware/wine/commit/f946d7c633088e7ee41da62dcbcb5a7480804d65
   # https://github.com/Frogging-Family/wine-tkg-git/issues/1467
-  if [[ "$_LOCAL_PRESET" = valve-exp* ]] || ( cd "${srcdir}"/"${_winesrcdir}" && ( git merge-base --is-ancestor dd8d73ba895ac6de6c7f25a5b5f3dc7386882b6e HEAD || git merge-base --is-ancestor f946d7c633088e7ee41da62dcbcb5a7480804d65 HEAD )); then
-    cp "$_where"/wine-tkg-patches/hotfixes/valve/fixes/0001-Revert-opencl-HACK-Build-a-stub-dll-if-Unix-headers-are-missing.mypatch "$_where"/
+  if [ "$_EXTERNAL_INSTALL" != "proton" ] || ( [ "$_EXTERNAL_INSTALL" = "proton" ] && [ "$_no_container" != "false" ] ); then
+    if [[ "$_LOCAL_PRESET" = valve-exp* ]] || ( cd "${srcdir}"/"${_winesrcdir}" && ( git merge-base --is-ancestor dd8d73ba895ac6de6c7f25a5b5f3dc7386882b6e HEAD || git merge-base --is-ancestor f946d7c633088e7ee41da62dcbcb5a7480804d65 HEAD )); then
+      if [[ "$_plain_version" = *_11.0 ]]; then
+        cp "$_where"/wine-tkg-patches/hotfixes/valve/fixes/0001-Revert-opencl-HACK-Build-a-stub-dll-if-Unix-headers-are-missing-11.myrevert "$_where"/
+      else
+        cp "$_where"/wine-tkg-patches/hotfixes/valve/fixes/0001-Revert-opencl-HACK-Build-a-stub-dll-if-Unix-headers-are-missing.mypatch "$_where"/
+      fi
+    fi
   fi
 fi
 
